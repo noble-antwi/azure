@@ -91,11 +91,77 @@ Under the Manage Section when Chris Page is Opened, there is an option of Linces
 From the image above, we can confirm Chris currently has no Lincense assinged to the fact that we have not assigned him any Lincense either on an individual level or on a Group Level. This arise from the fact that the Sales Group also does not have any assinged License as can be confirmed from Below
 ![NoLincenseassingedtosalesTeam](media/021_NoLincenseassingedtosalesTeam.png)
 
+Since we want to avoid assigning Lincense on an individual basis, in the Sales Group Page, I navigated to the Linceses Section on the left and Assigned an Micosoft 365 Lincense to the sales Group
+![AssigningOffice365Lincence](media/022_AssigningOffice365Lincence.png)
+
+![confimedLincestoSalesteam](media/023_confimedLincestoSalesteam.png)
+The License has been assigned accordingly.
+
+Going back to Chris Page, it can be confirmed he now has the Lincense of Microsoft 365 which he inherited from Sales Group just because he is a member of the group.
+![LincenceInherited](media/024_LincenceInherited.png)
+
+To view the apps contained in the License, We will log into my apps Portal but this time around making use of Emily Johnson.
+
+![EmilyJohnsonLoggingInProcess](media/036_EmilyJohnsonLoggingInProcess.png)
+
+![alt text](media/027_PromtToChangePassword.png)
+
+Emily Johnson has access all Microsoft 365 apps as she has the Lincense by virtue of been part of the Sales group in Entra confirmed from the Image below.
+![ListingofAppsAssignedtoEMily](media/028_ListingofAppsAssignedtoEMily.png)
+
 ## Implementing MFA Policy for Sales Team
 The crux of the MFA implementation endeavor resides in the formulation and enforcement of a comprehensive policy tailored explicitly for the Sales team. Multi-Factor Authentication serves as the linchpin of contemporary cloud security, bolstering resilience against an array of potential threats and vulnerabilities. Policies encapsulated within Azure Identity Protection afford administrators the latitude to enforce stringent security measures tailored to organizational exigencies. Leveraging the robust functionalities of Entra ID within the Azure portal, an intricately crafted MFA policy is conceived, delineating specific conditions, access controls, and authentication protocols. Rigorous testing protocols are subsequently instituted to validate the efficacy and robustness of the implemented policy, thereby ensuring a seamless authentication experience for Sales team members while fortifying the organization's security posture.
 
+### The Process
+From the beginning, the securiy default was disabled for the Tenant which ensure login happens using only singel factor authentiation which does not meet best security practices.
+In creating a new Policy, I will enforce MFA requirement for only the Sale Group Members in the Tenant. 
+To implement that, I moved to the Identity Protection  Blade in Entra ID and click on Conditional Access which give me the option to create a binding policy
+![Identity_Protection_Portal](media/039_Identity_Protection_Portal.png)
+
+![AboutToCreatePolicy](media/040_AboutToCreatePolicy.png)
+
+The Policy was named *MFA_Policy_For_SalesGP*. For the Assignment, I selcted Users and Group and then Specify the Sales Group.
+![Selecting_Sales_Group](media/041_Selecting_Sales_Group.png)
+
+For the Target resource, I select Office 365 Apps and then My Apps  as shown below
+![043_Selecting_Office365_For_SalesMFA](media/043_Selecting_Office365_For_SalesMFA.png)
+
+For the conditions sections, I selected two conditions of which are 
+1. Device Platform : Any Device
+2. Location: Any Locations
+This implies no matter your locaion or the types of device you use, you will still need to use MFA to access my apps portal and Office 365 Apps.
+![Specifying Conditions](<media/044_Specifying Conditions.png>)
+
+Then I set the Enable Policy to on
+![Policy_Created_Successfully](media/046_Policy_Created_Successfully.png)
+
+In the Grant section, I picked Require MFA
+![045_Require_Multi_Factor_Authentication](media/045_Require_Multi_Factor_Authentication.png)
+
 ## Comprehensive Testing Protocols
 Following the formulation and enforcement of the MFA policy, comprehensive testing protocols are instituted to validate the efficacy and robustness of the implemented security measures. Through meticulous testing procedures, administrators verify the seamless authentication experience for Sales team members and ascertain adherence to security policies and access controls. Rigorous scrutiny of authentication logs and verification of authentication methods corroborate the successful enforcement of MFA, thereby bolstering confidence in the organization's security infrastructure and fortifying resilience against potential threats.
+
+### The Process
+
+In order to test the efficacy of the newly created Policy, I will make use of Emily Johnson again
+![MFA Policy Requirement For Emily](media/047_MFA_PolicyRequirementForEmily.png)
+
+From above, you will realised Emily is Greeted with settting up his MFA Device before she can access the Portal after she tried accessing her My Apps Portal again .
+
+![Verification Sent](media/048_VerificationSent.png)
+
+A verification code has been sent to Emily after she supplied her Phone number in this case I am standing in for EMily hence handlin all the requirements.
+
+![Verification Complete](media/049_Verification_Complete.png)
+
+The verification has been completed after successsfully entering the OTP sent
+![Emily Login Success](media/050_EmilyLoginSuccess.png)
+
+To verify further that Emily is now Using MFA, I opened her Sign in Logs to check the Authentication methods which changed from Single Factor Authentication to Multi-Factor Authentication shown below
+![Verify in MFA Set Emily By Checking Her Sign In Logs](media/051_VerifyinMFASetEmilyByCheckingHerSignInLogs.png)
+
+It can also be seen from below image that Emily and all the other Sales Group Members will now have  the Policy Applied to them
+![Drill Down Into Emily MFA Login To See Her Policy](media/052_DrillDownINtoEmilyMFALoginToSeeHerPolicy.png)
 
 ## Conclusion
 In summation, the successful implementation of Multi-Factor Authentication for the Sales team within Entra ID signifies a seminal advancement towards fortifying organizational security and safeguarding critical assets against an array of potential threats. By adhering to the meticulously delineated steps and harnessing the potent capabilities afforded by Azure Identity Protection, administrators can navigate the complex terrain of cloud security with confidence and efficacy. Through the amalgamation of dynamic group creation, license assignment, policy enforcement, and comprehensive testing protocols, organizations can cultivate a culture of security awareness while facilitating a seamless and frictionless user experience. The implementation of MFA within Entra ID epitomizes a proactive stance towards fortifying organizational resilience in the face of evolving cybersecurity challenges.
