@@ -1,186 +1,177 @@
-# DEPLOYING A WEB SERVER ON AN AZURE VIRTUAL MACHINE
+# Deploying a Web Server on an Azure Virtual Machine
 
-Project-based Course Overview
-Welcome!
-Welcome to Azure: Create a Virtual Machine and Deploy a Web Server. This is a project-based course which should take approximately 2 hours to finish. Before diving into the project, please take a look at the course objectives and structure:
+## Welcome!
 
-Course Objectives
-In this course, we are going to focus on eight learning objectives:
+Welcome to my project on creating a Virtual Machine and deploying a web server on Azure. This project was an enlightening journey into the basics of Azure networking and virtual machine management. By the end of this write-up, you'll understand how to create and configure Virtual Networks, subnets, security groups, and Virtual Machines. You'll also learn how to use Bastion to connect to a Linux machine via SSH without exposing an external IP. Let's dive in!
 
-Create a Resource Group
+## Project Objectives
 
-Create a Virtual Network and a subnet
+The main objectives of this project were to:
 
-Protect a subnet using a Network Security Group
-
-Deploy Bastion to connect to a Virtual Machine
-
-Create an Ubuntu Server Virtual Machine
-
-Install Nextcloud by connecting via SSH using Bastion
-
-Publish an IP
-
-Create a DNS label
-
-By the end of this course, you will be able to understand how the basic networking architecture in Azure works, by creating Virtual Networks, subnets, security groups and Virtual Machines. You will also learn how to use Bastion to connect to a Linux machine using SSH without exposing and external IP. You'll also learn how to expose a public IP and an HTTPS port to access your web server.
-
-Course Structure
-This course is divided into 4 parts:
-
-Course Overview: This introductory reading material.
-
-Azure: create a Virtual Machine and deploy a web server: This is the hands on project that we will work on.
-
-Graded Quiz: This is the final assignment that you need to pass in order to finish the course successfully.
-
-Project Structure
-The hands on project on Azure: create a Virtual Machine and deploy a web server is divided into following tasks:
-
-Task 1: Create a Resource Group
-Task 2: Create a Virtual Network and a subnet
-Task 3: Protect a subnet using a Network Security Group
-Task 4: Deploy Bastion to connect to a Virtual Machine
-Task 5: Create an Ubuntu Server Virtual Machine
-Task 6: Install Nextcloud by connecting via SSH using Bastion
-Task 7: Publish an IP
-Task 8: Create a DNS label
-
+1. Create a Resource Group
+2. Create a Virtual Network and a subnet
+3. Protect a subnet using a Network Security Group
+4. Deploy Bastion to connect to a Virtual Machine
+5. Create an Ubuntu Server Virtual Machine
+6. Install Nextcloud by connecting via SSH using Bastion
+7. Publish an IP
+8. Create a DNS label
 
 ## Task 1: Create a Resource Group
 
-The name of the resource Group Created is **WebServerDeployment-RG**
+First, I created a Resource Group named **WebServerDeployment-RG**. A Resource Group in Azure is a container that holds related resources for an Azure solution. It helps in managing and organizing resources, providing a logical grouping for easier management and monitoring. Resource Groups play a crucial role in Azure resource management, offering a way to manage all the related resources in a single, logical group. This is particularly helpful for large projects where resources need to be managed efficiently.
+
 ![CreatedTheResourceGroup](Files/media/001_ResourceGroupCreation.png)
 
-## Task 2: Create a Virtual Network and a subnet
+## Task 2: Create a Virtual Network and a Subnet
 
-The name given to the Virtal Network is **WebServerDeployment_VNet**. The CIDR block for the IP selection is **172.10.0.0/16** and the default Subnet Deleted. First nealy created subnet was named *WebServerDeployment_SNet_A*
+Next, I created a Virtual Network named **WebServerDeployment_VNet** with a CIDR block of **172.10.0.0/16**. A Virtual Network (VNet) is a representation of your own network in the cloud. Within this VNet, I created a subnet named **WebServerDeployment_SNet_A**. Virtual Networks allow various types of Azure resources, such as Azure VMs, to securely communicate with each other, the internet, and on-premises networks. 
+
+The subnet **WebServerDeployment_SNet_A** allows for segmenting the virtual network into smaller, manageable segments. Subnets are essential for managing network traffic and applying network security policies at a granular level.
 
 ![Creation of Subnet A](Files/media/002_SubnetACreatoin.png)
 
 ![VnetCreated](Files/media/003_VnetCreated.png)
-In the diagram section, bellow is how  out infratructure will look like
+
+Here's a diagram of the infrastructure at this stage:
 
 ![VnetDiagram](Files/media/004_Diagram.png)
 
-## Task 3: Protect a subnet using a Network Security Group
-In the resource group created, i will then go and add the Network Security Group resource to it. Itsname is **WebServer_NSG**
-By Default, the created NSG has three inbound rules and 3 outband rules which are 
-1. Inbound Rules
-   1. AllowVnetInBound. 
-   2. AllowAzureLoadBalancerInBound
-   3. DenyAllInBound
-2. Outband Rules
-   1. AllowVnetOutBound
-   2. AllowInternetOutBound
-   3. DenyAllOutBound
+## Task 3: Protect a Subnet Using a Network Security Group
 
-The created NSG will be added to the subnet created earlier with some modification to it later.
+To enhance security, I added a Network Security Group (NSG) named **WebServer_NSG** to the subnet. An NSG contains security rules that allow or deny inbound network traffic to, or outbound network traffic from, several types of Azure resources. NSGs are critical for defining security policies at the network level and ensuring that only authorized traffic is allowed to reach specific resources.
+
+By default, the NSG had the following rules:
+
+1. **Inbound Rules:**
+   - AllowVnetInBound: Allows inbound traffic from within the virtual network.
+   - AllowAzureLoadBalancerInBound: Allows inbound traffic from Azure load balancers.
+   - DenyAllInBound: Denies all other inbound traffic by default.
+2. **Outbound Rules:**
+   - AllowVnetOutBound: Allows outbound traffic to other resources in the virtual network.
+   - AllowInternetOutBound: Allows outbound traffic to the internet.
+   - DenyAllOutBound: Denies all other outbound traffic by default.
+
+These default rules provide a secure starting point, ensuring that no unauthorized traffic can access the network until explicit rules are created to allow necessary traffic.
 
 ![NSGAddedToSubet](Files/media/005_NSGAddedToSubnet.png)
-The new architecture will therefore change accordingly to the one below
+
+The updated architecture with the NSG:
 
 ![NewDiagramWithNSGAdded](Files/media/006_NewDiagramLookNSG.png)
 
-## Task 4: Deploy Bastion to connect to a Virtual Machine
-In the creation process, the purpoose was selected to be Azure Bastion and the name given to it as AzureBationServer. The CIdr is 172.10.1.0/26 making 64 IPs available for use.
+## Task 4: Deploy Bastion to Connect to a Virtual Machine
+
+I then deployed Azure Bastion, naming it **WebserverDeployment_Bastion**. Azure Bastion provides secure and seamless RDP and SSH connectivity to your virtual machines directly through the Azure portal over SSL. This deployment included a new Public IP address named **WebServerDeployment_Bastion_IP**. Azure Bastion ensures that your VMs are not exposed to the public internet, reducing the risk of exposure to threats while providing secure connectivity.
+
+Creating Azure Bastion involved setting up a dedicated subnet with a CIDR block of **172.10.1.0/26**. This subnet is specially designated for the Bastion host, which acts as a jump server to provide secure access to the VMs within the virtual network. The use of Azure Bastion eliminates the need to manage and secure jump boxes and public IP addresses for your VMs, simplifying your network security management.
 
 ![BasitionSubnet](Files/media/007_BasitionSubnet.png)
 
 ![NewAllSubents](Files/media/008_AllSubentsNow.png)
 
-Creating of the BAstion
-In the processs, a new Public IP address was created which was named **WebServerDeployment_Bastion_IP**. The name given to the bation host howver is **WebserverDeployment_Bastion**. This resource was placed in the WebserveDeployment Resource group,the WebServerDeployment Virtual Netowrk and the Bastion Subnet as indicated in the image below. All other Details were left as Default
+Creating Azure Bastion required associating a new public IP and configuring it to be used specifically for the Bastion host. The name given to the Bastion host was **WebserverDeployment_Bastion**, and it was placed within the WebServerDeployment resource group and the WebServerDeployment virtual network. 
+
 ![CreationofBastion](Files/media/009_bastionDetails.png)
 
 ![DoneWithBastionandBastionPublicIP](Files/media/010_BastionCreated.png)
 
 ## Task 5: Create an Ubuntu Server Virtual Machine
 
-In our Resource group, i will create a new Ubntu server in it. I selected teh **Ubuntu Pro 18.04 LTS** free trial version for this project.Availabiity Zone will be left on only one
-Configuratio of VM
-Subscription : Azure subscription 1
-Subscription : Azure subscription 1
-Virtual machine name : WebServer-VM
-Region : (US) East US
-Availability options : Availability zone
-Availability zone : Zone 1
-Security type : Standard
-Image : Ubuntu Pro 18.04 LTS - x64 Gen2
-VM architecture : x64
-Size : Standard_B1ls - 1 vcpu, 0.5 GiB memory
-Username: antwinob
-SSH public key source : Generate new key pair
- SSH Key Type : RSA SSH Format
- Key pair name : WebServer-VM_SSHkey
- Public inbound ports : None
- OS disk type : Standard HDD (locally-redundant storage)
- Public IP : None (This will be created later)
+Next, I created an Ubuntu Server Virtual Machine. The VM was set up with the following specifications:
 
- The SSH key was downloaded during the creation of the VM.
- ![VMCreated](Files/media/011_VMResourceCreated.png)
+- **Name:** WebServer-VM
+- **Region:** East US
+- **Availability Zone:** Zone 1
+- **Image:** Ubuntu Pro 18.04 LTS
+- **Size:** Standard_B1ls (1 vcpu, 0.5 GiB memory)
+- **Username:** antwinob
+- **SSH Key:** Generated during the setup
 
- ### Connecting to the VM Via Bastion
+Ubuntu Pro 18.04 LTS is a long-term support version of the popular Ubuntu operating system, providing stability and security updates for an extended period. The chosen VM size, Standard_B1ls, is suitable for small workloads and testing environments, offering a cost-effective option for this project.
 
-In the VM reource, clicked on the connect Option which will give u the option to connect via a Bastion
+![VMCreated](Files/media/011_VMResourceCreated.png)
+
+### Connecting to the VM via Bastion
+
+Using Bastion, I connected to the VM, ensuring secure access without exposing the VM to the public internet. This secure connectivity is crucial for managing VMs in a production environment, where minimizing exposure to potential threats is a priority.
+
 ![VMConnection](Files/media/012_CoonectingtoVMViaBastion.png)
 
-The image below shows a successfull connection to the Azure Webserver VM
+The successful connection to the VM via Bastion was confirmed, providing a secure channel for managing the VM and installing necessary applications.
+
 ![ConnectionSuccess](Files/media/013_ConnectionSuccess.png)
 
-## Task 6: Install Nextcloud by connecting via SSH using Bastion
+## Task 6: Install Nextcloud by Connecting via SSH Using Bastion
 
-In the SSH session to the server via Bastion, I will install NextCloud using the comma
+I installed Nextcloud on the VM. Nextcloud is a suite of client-server software for creating and using file hosting services. It is a popular self-hosted solution for cloud storage. Nextcloud provides functionalities similar to Dropbox or Google Drive but gives you complete control over your data.
+
+Nextcloud offers file synchronization, sharing, and collaboration features, making it an ideal solution for personal and business use. It supports a wide range of applications and integrations, enhancing its functionality beyond just file storage. With Nextcloud, you can manage calendars, contacts, emails, and much more, all within a single, secure platform.
+
+To install Nextcloud, I used the following commands:
+
 ```bash
 sudo snap install nextcloud
 ```
-And then Created the admin Username and Genereta  a Certicate
+Then, I created the admin user and enabled HTTPS:
 
-``` bash
+```bash
 sudo nextcloud.manual-install <username> <password>
 sudo nextcloud.enable-https self-signed
 ```
 
+These commands installed Nextcloud, created an administrative user, and configured the server to use HTTPS with a self-signed certificate. Using HTTPS ensures that data transmitted between the client and server is encrypted, providing an additional layer of security.
+
 ## Task 7: Publish an IP
-
-In the resource group, i selected the Private Network Interface Created whih has a default name of **webserver-vm538_z1** Under settings, I clicked on IP Configuration in order to add a Publi Address so the Website can be assessible publicly
-
+I then associated a Public IP address with the VM's network interface to make the web server accessible publicly. The IP address assigned was 52.234.132.247. Associating a public IP address allows external users to access the services hosted on the VM, such as the Nextcloud application.
 ![NetworkInterface](Files/media/015_netowkrInterface.png)
 
-CLicking on the Ipconfig 1, the option pop up to Associate a Pubic IP which i created and named as **WebServer_VM_Public_IP**
-![PublicIP](Files/media/016_AssocitaingpublicIP.png)
+The process of associating the public IP involved configuring the network interface of the VM. This step was crucial to ensure that the web server could be accessed from the internet.
 
+![PublicIP](Files/media/016_AssocitaingpublicIP.png)
+The VM was now assigned a public IP address, making it accessible from the internet.
 ![DoneAddingPublicIP](Files/media/017_Done.png)
 
-The VM will now have a public IP assigned to it as indicated below
+Since the NSG did not allow inbound HTTPS traffic, I added a rule to permit HTTPS traffic. This step was necessary to allow secure connections to the Nextcloud web server from external users.
+
 ![PublicEndpoint](Files/media/018_VMPublicAddress.png)
-The pubicl IP will now become our endpoint to serve the web content. The IP Address is **52.234.132.247**. Pasting this in a web browser will however not seerve any conten as the current NSG setting does not allow inbound traffic of Type HTTPS as can be seen below
+The new inbound rule was configured to allow HTTPS traffic from my IP address initially. This approach ensures that only authorized users can access the server while configuring and testing.
+
 
 ![NSGDeatils](Files/media/019_NSGDetails.png)
 
-There is a need to create a new Inblud Rule to allow traffic from my IP for the first time and then edit to now accept traffic from the whole web. This will be accomplished by opening the VM interface and then opening the Networking Blade where a new Inboud port rule will be added. The name of he rule will be **AllowMyIpAddressHTTPSInbound**
 ![AllowHTTPS](Files/media/020_AllowHTTPSTrafficFromMyIP.png)
 
-As can be seen below, the Web server is now serving the default site. This however indicates that we are assessing the site through an untrusted Domain hence we will need to add a DNS entry to the Public IP Address endpoint to solve this issue.
-## Task 8: Create a DNS label
 
-In order to set this, we will need to open the WebServer_VM_Public_IP address and open the COnfiguration blade where the DNS name label option will show
+# Task 8: Create a DNS Label
 
+To access the server through a friendly name, I created a DNS label qerbros, resulting in the DNS name **qerbros.eastus.cloudapp.azure.com**. Creating a DNS label provides an easier way to access the web server instead of using the IP address. This is particularly useful for users and applications that need to connect to the server.
 ![SettingDNS](Files/media/022_SettingDNS.png)
-I will lable it as **qerbros** which will come to **qerbros.eastus.cloudapp.azure.com** as shown below
-![qerbrosDNS](Files/media/023_qerbros.png)
 
-The VM now has the DNS endpoint and the public address attached, i will then have an SSH session into the server making use of teh Bation in order to make the necessary adsjutment.
-The cahnge will be done using the command 
-``` bash
+The DNS label qerbros was successfully created, providing a user-friendly domain name for accessing the web server.
+
+![qerbrosDNS](Files/media/023_qerbros.png)
+Finally, I updated Nextcloud's trusted domains configuration to include the new DNS name:
+
+```bash
 sudo nextcloud.occ config:system:set trusted_domains 1 --value=qerbros.eastus.cloudapp.azure.com
 ```
-![alt text](Files/media/024_ChangingDNSEndpointOnServer.png)
 
-The site can now be access on the DNS endpoint with success as shown in the image below
+Updating the trusted domains configuration ensures that Nextcloud recognizes requests coming from the new DNS name, preventing potential security issues related to domain spoofing.
+
+![DNSENdpointServer](Files/media/024_ChangingDNSEndpointOnServer.png)
+
+The site was now accessible via the DNS endpoint:
 
 ![DNSUccess](Files/media/025_Success.png)
 
+The successful configuration of the DNS label and updating Nextcloud's trusted domains meant that users could now access the Nextcloud application using a friendly domain name.
+
+
+
 ![Done](Files/media/026_NextCloud.png)
 
+## Conclusion
+This project provided a hands-on experience with Azure's powerful features for deploying and managing virtual networks and machines. By the end, I successfully deployed a web server with Nextcloud on an Azure VM, ensuring secure and accessible cloud storage. The journey involved setting up a resource group, creating and configuring a virtual network and subnets, securing the network with a Network Security Group, deploying and connecting to a VM using Azure Bastion, installing Nextcloud, and configuring a public IP and DNS label for user-friendly access.
 
+This project demonstrated the importance of secure network configuration and management in the cloud, highlighting best practices for deploying web applications securely. The use of Azure Bastion and Network Security Groups ensured that the VM was protected from unauthorized access, while the DNS configuration improved accessibility and usability for end-users.
