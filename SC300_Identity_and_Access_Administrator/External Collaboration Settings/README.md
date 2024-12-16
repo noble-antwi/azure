@@ -13,6 +13,3 @@ All steps and configurations are detailed in the **YouTube tutorial**.
 [Watch the Full Tutorial Here](https://youtu.be/ZSEk_FXOis0)  
 
 Feel free to explore the repository and reach out with any questions or feedback!  
-
-## Tags  
-`#MicrosoftEntraID` `#AzureAD` `#Cybersecurity` `#CollaborationSettings` `#ITAdmin`
