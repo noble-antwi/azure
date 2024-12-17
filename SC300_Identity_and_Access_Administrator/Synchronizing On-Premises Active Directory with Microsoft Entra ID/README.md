@@ -28,13 +28,16 @@ Here’s what I did with IDFix:
 
 By resolving these issues early, I ensured that the synchronization process would proceed smoothly and without unnecessary errors.
 
+[![IDFix Implementation Video Demonstration](<Images/001 ID FIx.png>)](https://youtu.be/mAwQ-iYKQXg?si=FfROEZP7APr8lJTi)
+
+
 ### 2. Installing and Configuring Entra ID Connect
 
 Once the identity issues were sorted out, I moved on to setting up **Entra ID Connect**, which would be responsible for syncing my on-prem AD with Entra ID.
 
 #### Installation
 
-- I downloaded and installed **Entra ID Connect** from the Microsoft website. I chose to install it on a server that had access to both the on-prem AD and Entra ID.
+- I downloaded and installed **Entra ID Connect** from the Microsoft website. I chose to install it on a server that had access to the on-prem AD.
 - During the installation process, I opted for the **custom installation** option, which allowed me to fine-tune the setup, such as enabling **password synchronization**, **write-back**, and other necessary features.
 
 #### Configuration
@@ -65,17 +68,7 @@ With the configuration in place, I initiated the synchronization process. During
 
 I regularly checked the status to ensure there were no issues and to verify that the sync was happening as expected.
 
-### 4. Troubleshooting and Resolving Sync Issues
-
-During the sync, a few errors popped up, as is common with any complex process. Fortunately, the error logs provided by Entra ID Connect were detailed enough for me to troubleshoot effectively.
-
-Here’s how I resolved the issues:
-
-- **Attribute mismatches**: Some attributes in my on-prem AD did not meet Entra ID’s requirements (e.g., invalid email formats). The logs helped me pinpoint these issues, and I corrected the attributes manually or using the IDFix tool.
-- **Connectivity issues**: In a couple of instances, network issues caused the sync to fail. I verified the connectivity between the Entra ID Connect server and both on-prem AD and Entra ID, ensuring there were no firewall or DNS issues blocking the sync.
-- **Account lockouts or failed sign-ins**: After the sync, some users had issues signing in. I investigated the sync logs and verified that **password hash synchronization** was functioning correctly, and I resolved the issues by re-syncing the affected accounts.
-
-### 5. Post-Sync Verification
+### 4. Post-Sync Verification
 
 Once the sync process was completed without errors, I verified the results by checking:
 
@@ -87,13 +80,22 @@ Once the sync process was completed without errors, I verified the results by ch
 
 For a detailed, step-by-step guide on how I completed this synchronization process, watch the YouTube series I created below:
 
-[Watch the YouTube Series on Entra ID Connect Sync Process](#)
+[Step 1: ID Fix ](https://youtu.be/mAwQ-iYKQXg?si=JWeNy5isvPZasNx4)
+
+[Step 2](https://youtu.be/VYaXZ6JGHu0?si=AgWdl46SSc2SECa5)
+
+[Step 3](https://youtu.be/m2mRK-hmJpU?si=hcbNkdHc5KNRU0VP)
+
+[Step 4](https://youtu.be/XXqk_VIf3fQ?si=wcisIPnAAMdf41KF)
+
+[Step 5](https://youtu.be/GxAFqMWmkv0)
+
+[Step 6](https://youtu.be/m3yc9_6dSh8?si=5EXlBEoo64rDAqdb)
 
 This video series covers:
 
 - How I used the **IDFix tool** to resolve identity issues.
-- Setting up and configuring **Entra ID Connect**.
-- Troubleshooting common issues during the sync process.
+- Setting up and configuring **Entra ID Connect**
 - Verifying successful synchronization and post-sync functionality.
 
 ## Conclusion
