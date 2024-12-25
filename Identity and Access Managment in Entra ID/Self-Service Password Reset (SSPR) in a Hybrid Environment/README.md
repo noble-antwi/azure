@@ -37,3 +37,6 @@ This project details the implementation of Microsoft Entra ID’s Self-Service P
 **Full Implementation**:  
 For a step-by-step guide and practical demonstration of this project, check out my YouTube channel:  
 👉 [Watch the Full Implementation on YouTube](https://www.youtube.com/playlist?list=PLfeBBu8bvwXmzHpNOnqLci5VEiWn248iC)
+
+
+ [Final Episode can be located here](https://drive.google.com/file/d/1EMFn6OqO7y0I5-Ntu0EhGS-r4L1lH44O/view?usp=sharing)
